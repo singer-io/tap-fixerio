@@ -11,6 +11,7 @@ import singer
 base_url = 'https://api.fixer.io/'
 
 logger = singer.get_logger()
+session = requests.Session()
 
 def parse_response(r):
     flattened = r['rates']
@@ -38,7 +39,10 @@ def do_sync(args):
 
     try:
         params = {'base': base}
-        response = requests.get(url=base_url + '/latest', params=params)
+        req = requests.Request('GET', base_url + '/latest', params=params).prepare()
+        logger.info('GET {}'.format(req.url))
+        response = session.send(req)
+        response.raise_for_status()
         singer.write_records('exchange_rate', [parse_response(response.json())])
         logger.info('Tap exiting normally')
     except requests.exceptions.RequestException as e:
