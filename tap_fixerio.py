@@ -38,7 +38,7 @@ def do_sync(base, start_date):
 
     try:
         while True:
-            req = requests.Request('GET', base_url + '/latest', params=params).prepare()
+            req = requests.Request('GET', base_url + '/' + state['start_date'], params=params).prepare()
             logger.info('GET {}'.format(req.url))
             response = session.send(req)
             response.raise_for_status()
