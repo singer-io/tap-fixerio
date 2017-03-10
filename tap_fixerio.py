@@ -6,6 +6,7 @@ import argparse
 import time
 import requests
 import singer
+import backoff
 
 from datetime import date, datetime, timedelta
 
@@ -28,21 +29,33 @@ schema = {'type': 'object',
                     'format': 'date-time'}},
           'additionalProperties': True}
 
+def giveup(error):
+    logger.error(error.response.text)
+    response = error.response
+    return not (response.status_code == 429 or
+                response.status_code >= 500)
+
+@backoff.on_exception(backoff.constant,
+                      (requests.exceptions.RequestException),
+                      jitter=backoff.random_jitter,
+                      max_tries=5,
+                      giveup=giveup,
+                      interval=30)
+def request(url, params):
+    response = requests.get(url=url, params=params)
+    response.raise_for_status()
+    return response
+    
 def do_sync(base, start_date):
     logger.info('Replicating exchange rate data from fixer.io starting from {}'.format(start_date))
     singer.write_schema('exchange_rate', schema, 'date')
 
     state = {'start_date': start_date}
     next_date = start_date
-    params = {'base': base}
-
+    
     try:
         while True:
-            req = requests.Request('GET', base_url + '/' + state['start_date'], params=params).prepare()
-            logger.info('GET {}'.format(req.url))
-            response = session.send(req)
-            response.raise_for_status()
-
+            response = request(base_url + next_date, {'base': base})
             payload = response.json()
 
             if datetime.strptime(next_date, DATE_FORMAT) > datetime.utcnow():
