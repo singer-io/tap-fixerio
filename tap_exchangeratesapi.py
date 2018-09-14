@@ -99,7 +99,7 @@ def main():
         state = {}
 
     start_date = state.get('start_date',
-                           config.get('start_date', datetime.utcnow().strftime(DATE_FORMAT)))
+                           config.get('start_date', datetime.utcnow().date().strftime(DATE_FORMAT)))
 
     do_sync(config.get('base', 'USD'), start_date)
 
