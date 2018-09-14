@@ -10,7 +10,7 @@ import backoff
 
 from datetime import date, datetime, timedelta
 
-base_url = 'https://api.fixer.io/'
+base_url = 'https://api.exchangeratesapi.io/'
 
 logger = singer.get_logger()
 session = requests.Session()
@@ -47,7 +47,7 @@ def request(url, params):
     return response
     
 def do_sync(base, start_date):
-    logger.info('Replicating exchange rate data from fixer.io starting from {}'.format(start_date))
+    logger.info('Replicating exchange rate data from exchangeratesapi.io starting from {}'.format(start_date))
     singer.write_schema('exchange_rate', schema, 'date')
 
     state = {'start_date': start_date}

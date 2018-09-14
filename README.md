@@ -1,7 +1,7 @@
-# tap-fixerio
+# tap-exchangeratesapi
 
 A [Singer](https://singer.io) Tap to extract currency exchange rate
-data from [fixer.io](http://fixer.io).
+data from [exchangeratesapi.io](http://exchangeratesapi.io).
 
 ---
 
