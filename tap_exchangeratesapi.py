@@ -98,8 +98,8 @@ def main():
     else:
         state = {}
 
-    start_date = state.get('start_date',
-                           config.get('start_date', datetime.utcnow().date().strftime(DATE_FORMAT)))
+    start_date = state.get('start_date') or config.get('start_date') or datetime.utcnow().strftime(DATE_FORMAT)
+    start_date = singer.utils.strptime_with_tz(start_date).date().strftime(DATE_FORMAT)
 
     do_sync(config.get('base', 'USD'), start_date)
 
