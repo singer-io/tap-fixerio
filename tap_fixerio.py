@@ -10,7 +10,7 @@ import backoff
 
 from datetime import date, datetime, timedelta
 
-base_url = 'https://api.fixer.io/'
+base_url = 'http://data.fixer.io/api/'
 
 logger = singer.get_logger()
 session = requests.Session()
@@ -46,7 +46,7 @@ def request(url, params):
     response.raise_for_status()
     return response
     
-def do_sync(base, start_date):
+def do_sync(base, start_date, api_key):
     logger.info('Replicating exchange rate data from fixer.io starting from {}'.format(start_date))
     singer.write_schema('exchange_rate', schema, 'date')
 
@@ -55,7 +55,7 @@ def do_sync(base, start_date):
     
     try:
         while True:
-            response = request(base_url + next_date, {'base': base})
+            response = request(base_url + next_date, {'base': base, 'access_key': api_key})
             payload = response.json()
 
             if datetime.strptime(next_date, DATE_FORMAT) > datetime.utcnow():
@@ -101,7 +101,9 @@ def main():
     start_date = state.get('start_date',
                            config.get('start_date', datetime.utcnow().strftime(DATE_FORMAT)))
 
-    do_sync(config.get('base', 'USD'), start_date)
+    api_key = config.get('api_key')
+
+    do_sync(config.get('base', 'USD'), start_date, api_key)
 
 
 if __name__ == '__main__':

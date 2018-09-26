@@ -1,4 +1,5 @@
 {
-    "base": "AUD",
-    "start_date": "2017-02-02"
+    "base": "EUR",
+    "start_date": "2018-09-02",
+    "api_key": "your_fixer_io_api_key"
 }
