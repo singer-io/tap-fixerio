@@ -10,11 +10,10 @@ import backoff
 
 from datetime import date, datetime, timedelta
 
-base_url = 'https://api.fixer.io/'
+base_url = 'http://data.fixer.io/api/'
 
 logger = singer.get_logger()
 session = requests.Session()
-
 DATE_FORMAT='%Y-%m-%d'
 
 def parse_response(r):
@@ -45,20 +44,23 @@ def request(url, params):
     response = requests.get(url=url, params=params)
     response.raise_for_status()
     return response
-    
-def do_sync(base, start_date):
+
+def do_sync(base, start_date, access_key):
     logger.info('Replicating exchange rate data from fixer.io starting from {}'.format(start_date))
     singer.write_schema('exchange_rate', schema, 'date')
 
     state = {'start_date': start_date}
     next_date = start_date
-    
+
     try:
         while True:
-            response = request(base_url + next_date, {'base': base})
+            response = request(base_url + next_date, {'base': base, 'access_key': access_key})
             payload = response.json()
+            print(payload)
 
             if datetime.strptime(next_date, DATE_FORMAT) > datetime.utcnow():
+                break
+            elif payload.get('error'):
                 break
             else:
                 singer.write_records('exchange_rate', [parse_response(payload)])
@@ -80,7 +82,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        '-c', '--config', help='Config file', required=False)
+        '-c', '--config', help='Config file', default='config.json', required=False)
     parser.add_argument(
         '-s', '--state', help='State file', required=False)
 
@@ -100,8 +102,8 @@ def main():
 
     start_date = state.get('start_date',
                            config.get('start_date', datetime.utcnow().strftime(DATE_FORMAT)))
-
-    do_sync(config.get('base', 'USD'), start_date)
+    access_key = state.get('access_key', config.get('access_key'))
+    do_sync(config.get('base', 'USD'), start_date, access_key)
 
 
 if __name__ == '__main__':
