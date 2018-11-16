@@ -5,18 +5,15 @@ data from [fixer.io](http://fixer.io).
 
 ## How to use it
 
-`tap-fixerio` works to pull currency exchange rates from the Fixer API
-
 ### Install and Run
 
 First, make sure Python 3 is installed on your system or follow these
-installation instructions for [Mac] or
-[Ubuntu].
+installation instructions for [Mac] or [Ubuntu].
 
 First, get an access key from [fixer.io](http://fixer.io). You need at least
 the basic plan to get exchange rates from a base currency (such as USD).
 
-Convert config.sample.json to config.json; fill out your parameters.
+Convert `config.sample.json` to `config.json`; fill out your parameters.
 
 It's recommended to use a virtualenv:
 
@@ -27,25 +24,22 @@ It's recommended to use a virtualenv:
  pip install -e '.[dev]'
 ```
 
+Set up the `target-csv` virtual environment according to the instructions [here](https://github.com/singer-io/target-csv/blob/master/README.md).
 
-These commands will install `tap-fixerio`  with pip,
-and then run it:
+These commands will install `tap-fixerio`  with pip, and then run it:
 
 ```bash
-> pip install target-csv
-> tap-fixerio
-  INFO Replicating the latest exchange rate data from fixer.io
-  INFO Tap exiting normally
+  pip install target-csv
+  tap-fixerio
 ```
 
 The data will be written to a file called `exchange_rate.csv` in your
 working directory.
 
-```bash
-› cat exchange_rate.csv
+$ cat exchange_rate.csv
 AUD,BGN,BRL,CAD,CHF,CNY,CZK,DKK,GBP,HKD,HRK,HUF,IDR,ILS,INR,JPY,KRW,MXN,MYR,NOK,NZD,PHP,PLN,RON,RUB,SEK,SGD,THB,TRY,ZAR,EUR,USD,date
 1.3023,1.8435,3.0889,1.3109,1.0038,6.869,25.47,7.0076,0.79652,7.7614,7.0011,290.88,13317.0,3.6988,66.608,112.21,1129.4,19.694,4.4405,8.3292,1.3867,50.198,4.0632,4.2577,58.105,8.9724,1.4037,34.882,3.581,12.915,0.9426,1.0,2017-02-24T00:00:00Z
-```
+
 
 ---
 
