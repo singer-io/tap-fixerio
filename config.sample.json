@@ -1,5 +1,5 @@
 {
-    "base": "AUD",
-    "start_date": "2018-11-12",
-    "access_key": "your_access_key"
+    "base": "USD",
+    "start_date": "<YYYY-MM-DD>",
+    "access_key": "<your_access_key>"
 }

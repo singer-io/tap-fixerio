@@ -56,11 +56,11 @@ def do_sync(base, start_date, access_key):
         while True:
             response = request(base_url + next_date, {'base': base, 'access_key': access_key})
             payload = response.json()
-            print(payload)
 
             if datetime.strptime(next_date, DATE_FORMAT) > datetime.utcnow():
                 break
             elif payload.get('error'):
+                logger.error(payload['error'])
                 break
             else:
                 singer.write_records('exchange_rate', [parse_response(payload)])
@@ -82,7 +82,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        '-c', '--config', help='Config file', default='config.json', required=False)
+        '-c', '--config', help='Config file', required=False)
     parser.add_argument(
         '-s', '--state', help='State file', required=False)
 
@@ -103,6 +103,12 @@ def main():
     start_date = state.get('start_date',
                            config.get('start_date', datetime.utcnow().strftime(DATE_FORMAT)))
     access_key = state.get('access_key', config.get('access_key'))
+
+    ## if access key is not supplied
+    if access_key is None:
+        logger.fatal("Please provide valid access key for Fixerio API")
+        sys.exit(-1)
+
     do_sync(config.get('base', 'USD'), start_date, access_key)
 
 
