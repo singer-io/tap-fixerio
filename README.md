@@ -30,7 +30,7 @@ Set up the `target-csv` virtual environment according to the instructions
 These commands will install `tap-fixerio`  with pip, and then run it:
 
 ```bash
-~/.virtualenvs/tap-fixerio/bin/tap-fixerio --config \ ~/singer.io/tap_fixerio_config.json
+~/.virtualenvs/tap-fixerio/bin/tap-fixerio --config \ ~/singer.io/tap_fixerio_config.json | target-csv
 ```
 
 The data will be written to a file called `exchange_rate.csv` in your
