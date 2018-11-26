@@ -60,8 +60,7 @@ def do_sync(base, start_date, access_key):
             if datetime.strptime(next_date, DATE_FORMAT) > datetime.utcnow():
                 break
             elif payload.get('error'):
-                logger.error(payload['error'])
-                break
+                raise RuntimeError(payload['error'])
             else:
                 singer.write_records('exchange_rate', [parse_response(payload)])
                 state = {'start_date': next_date}
