@@ -10,6 +10,10 @@ import backoff
 
 from datetime import date, datetime, timedelta
 
+REQUIRED_CONFIG_KEYS = [
+    "access_key",
+]
+
 base_url = 'https://data.fixer.io/api/'
 
 logger = singer.get_logger()
@@ -85,28 +89,22 @@ def main():
     parser.add_argument(
         '-s', '--state', help='State file', required=False)
 
-    args = parser.parse_args()
+    #args = parser.parse_args()
+    args = singer.utils.parse_args(REQUIRED_CONFIG_KEYS)
 
     if args.config:
-        with open(args.config) as file:
-            config = json.load(file)
+        config = args.config
     else:
         config = {}
 
     if args.state:
-        with open(args.state) as file:
-            state = json.load(file)
+        state = args.state
     else:
         state = {}
 
     start_date = state.get('start_date',
                            config.get('start_date', datetime.utcnow().strftime(DATE_FORMAT)))
     access_key = state.get('access_key', config.get('access_key'))
-
-    ## if access key is not supplied
-    if access_key is None:
-        logger.fatal("Please provide valid access key for Fixerio API")
-        sys.exit(-1)
 
     do_sync(config.get('base', 'USD'), start_date, access_key)
 
