@@ -9,7 +9,7 @@ A [Singer Tap] Tap to extract currency exchange rate data from [fixer.io].
 First, make sure Python 3 is installed on your system or follow these
 installation instructions for [Mac] or [Ubuntu].
 
-First, get an access key from [fixer.io](http://fixer.io). You need at
+Then, get an access key from [fixer.io](http://fixer.io). You need at
 least the basic plan to get exchange rates from a base currency (such as
 USD).
 
