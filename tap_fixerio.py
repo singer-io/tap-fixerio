@@ -10,11 +10,14 @@ import backoff
 
 from datetime import date, datetime, timedelta
 
-base_url = 'https://api.fixer.io/'
+REQUIRED_CONFIG_KEYS = [
+    "access_key",
+]
+
+base_url = 'https://data.fixer.io/api/'
 
 logger = singer.get_logger()
 session = requests.Session()
-
 DATE_FORMAT='%Y-%m-%d'
 
 def parse_response(r):
@@ -45,21 +48,23 @@ def request(url, params):
     response = requests.get(url=url, params=params)
     response.raise_for_status()
     return response
-    
-def do_sync(base, start_date):
+
+def do_sync(base, start_date, access_key):
     logger.info('Replicating exchange rate data from fixer.io starting from {}'.format(start_date))
     singer.write_schema('exchange_rate', schema, 'date')
 
     state = {'start_date': start_date}
     next_date = start_date
-    
+
     try:
         while True:
-            response = request(base_url + next_date, {'base': base})
+            response = request(base_url + next_date, {'base': base, 'access_key': access_key})
             payload = response.json()
 
             if datetime.strptime(next_date, DATE_FORMAT) > datetime.utcnow():
                 break
+            elif payload.get('error'):
+                raise RuntimeError(payload['error'])
             else:
                 singer.write_records('exchange_rate', [parse_response(payload)])
                 state = {'start_date': next_date}
@@ -84,24 +89,24 @@ def main():
     parser.add_argument(
         '-s', '--state', help='State file', required=False)
 
-    args = parser.parse_args()
+    #args = parser.parse_args()
+    args = singer.utils.parse_args(REQUIRED_CONFIG_KEYS)
 
     if args.config:
-        with open(args.config) as file:
-            config = json.load(file)
+        config = args.config
     else:
         config = {}
 
     if args.state:
-        with open(args.state) as file:
-            state = json.load(file)
+        state = args.state
     else:
         state = {}
 
     start_date = state.get('start_date',
                            config.get('start_date', datetime.utcnow().strftime(DATE_FORMAT)))
+    access_key = state.get('access_key', config.get('access_key'))
 
-    do_sync(config.get('base', 'USD'), start_date)
+    do_sync(config.get('base', 'USD'), start_date, access_key)
 
 
 if __name__ == '__main__':
