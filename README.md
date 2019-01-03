@@ -14,7 +14,14 @@ least the basic plan to get exchange rates from a base currency (such as
 USD).
 
 Then, convert `config.sample.json` to
-`~/singer.io/tap_fixerio_config.json`; fill out your parameters.
+`~/singer.io/tap_fixerio_config.json`; fill out your parameters:
+
+Config Key | Required? | Default | Description
+--- | --- | --- | ---
+`base` | Yes | 'USD' | The base rate to which others will be converted
+`start_date` | Yes | Today | The starting date from which rates will be pulled in `YYYY-MM-DD` format (overridden if a state file is passed)
+`access_key` | Yes | None | Your fixer.io access key
+`symbols` | No | None | An optional list of currency symbols to fetch in the following format: ['USD', 'GBP', etc.]. If not specified fixer will return a list of all exchange rates for each day
 
 It's recommended to use a virtualenv:
 
