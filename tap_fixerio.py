@@ -49,7 +49,7 @@ def request(url, params):
     response.raise_for_status()
     return response
 
-def do_sync(base, start_date, access_key):
+def do_sync(base, start_date, access_key, symbols=None):
     logger.info('Replicating exchange rate data from fixer.io starting from {}'.format(start_date))
     singer.write_schema('exchange_rate', schema, 'date')
 
@@ -58,7 +58,10 @@ def do_sync(base, start_date, access_key):
 
     try:
         while True:
-            response = request(base_url + next_date, {'base': base, 'access_key': access_key})
+            if symbols:
+                response = request(base_url + next_date, {'base': base, 'access_key': access_key, 'symbols': ','.join(symbols)})
+            else:
+                response = request(base_url + next_date, {'base': base, 'access_key': access_key})
             payload = response.json()
 
             if datetime.strptime(next_date, DATE_FORMAT) > datetime.utcnow():
@@ -106,7 +109,7 @@ def main():
                            config.get('start_date', datetime.utcnow().strftime(DATE_FORMAT)))
     access_key = state.get('access_key', config.get('access_key'))
 
-    do_sync(config.get('base', 'USD'), start_date, access_key)
+    do_sync(config.get('base', 'USD'), start_date, access_key, symbols=config.get('symbols', None))
 
 
 if __name__ == '__main__':
