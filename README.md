@@ -37,7 +37,8 @@ Deactivate the `tap-fixerio` virtual environment by using the `deactivate` comma
 then set up the `target-csv` virtual environment according to the instructions
 [here](https://github.com/singer-io/target-csv/blob/master/README.md).
 
-Once `target-csv`, or another Singer target, is installed in its own virtual environment run them with the following command:
+Once `target-csv`, or another Singer target, is installed in its own virtual
+environment run them with the following command:
 
 ```bash
 ~/.virtualenvs/tap-fixerio/bin/tap-fixerio --config ~/singer.io/tap_fixerio_config.json | ~/.virtualenvs/target-csv/bin/target-csv
