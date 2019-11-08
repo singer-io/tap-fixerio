@@ -1,6 +1,7 @@
 {
-    "base": "USD",
+    "subscription_plan": "free",
     "start_date": "<YYYY-MM-DD>",
     "access_key": "<your_access_key>",
-    "symbols": ["USD","EUR","GBP","JPY"]
+    "symbols": ["USD","EUR","GBP","JPY"],
+    "base": "USD"
 }

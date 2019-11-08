@@ -11,7 +11,7 @@ import backoff
 from datetime import date, datetime, timedelta
 
 REQUIRED_CONFIG_KEYS = [
-    "access_key",
+    'access_key',
 ]
 
 base_url = 'https://data.fixer.io/api/'
@@ -49,7 +49,7 @@ def request(url, params):
     response.raise_for_status()
     return response
 
-def do_sync(base, start_date, access_key, symbols=None):
+def do_sync(subscription_plan, base, start_date, access_key, symbols=None):
     logger.info('Replicating exchange rate data from fixer.io starting from {}'.format(start_date))
     singer.write_schema('exchange_rate', schema, 'date')
 
@@ -58,7 +58,9 @@ def do_sync(base, start_date, access_key, symbols=None):
 
     try:
         while True:
-            if symbols:
+            if subscription_plan == 'free':
+                response = request(base_url.replace('https', 'http') + next_date, {'access_key': access_key, 'symbols': ','.join(symbols)})
+            elif symbols:
                 response = request(base_url + next_date, {'base': base, 'access_key': access_key, 'symbols': ','.join(symbols)})
             else:
                 response = request(base_url + next_date, {'base': base, 'access_key': access_key})
@@ -109,7 +111,7 @@ def main():
                            config.get('start_date', datetime.utcnow().strftime(DATE_FORMAT)))
     access_key = state.get('access_key', config.get('access_key'))
 
-    do_sync(config.get('base', 'USD'), start_date, access_key, symbols=config.get('symbols', None))
+    do_sync(config.get('subscription_plan', 'free'), config.get('base', 'USD'), start_date, access_key, symbols=config.get('symbols', None))
 
 
 if __name__ == '__main__':
