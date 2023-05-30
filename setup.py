@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name='tap-fixerio',
-      version='0.1.3',
+      version='0.1.4',
       description='Singer.io tap for extracting currency exchange rate data from the fixer.io API',
       author='Stitch',
       url='http://singer.io',
