@@ -18,10 +18,11 @@ Then, convert `config.sample.json` to
 
 Config Key | Required? | Default | Description
 --- | --- | --- | ---
-`base` | Yes | 'USD' | The base rate to which others will be converted
+`subscription_plan` | Yes | 'free' | Your fixer.io subscription plan
 `start_date` | Yes | Today | The starting date from which rates will be pulled in `YYYY-MM-DD` format (overridden if a state file is passed)
 `access_key` | Yes | None | Your fixer.io access key
 `symbols` | No | None | An optional list of currency symbols to fetch in the following format: ['USD', 'GBP', etc.]. If not specified fixer will return a list of all exchange rates for each day
+`base` | Yes | 'USD' | The base rate to which others will be converted (not available in free subscription plan, for which it is set to 'EUR')
 
 It's recommended to use a virtualenv:
 
