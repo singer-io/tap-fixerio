@@ -92,18 +92,18 @@ def main():
     parser.add_argument(
         '-s', '--state', help='State file', required=False)
 
-    #args = parser.parse_args()
-    args = singer.utils.parse_args(REQUIRED_CONFIG_KEYS)
-
+    args = parser.parse_args()
     if args.config:
-        config = args.config
+        config = singer.utils.load_json(args.config)
     else:
         config = {}
 
     if args.state:
-        state = args.state
+        state = singer.utils.load_json(args.state)
     else:
         state = {}
+
+    singer.utils.check_config(config, REQUIRED_CONFIG_KEYS)
 
     start_date = state.get('start_date',
                            config.get('start_date', datetime.utcnow().strftime(DATE_FORMAT)))
